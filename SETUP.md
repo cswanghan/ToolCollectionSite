@@ -3,7 +3,7 @@
 ## 1. 数据库初始化
 
 ### 步骤 1: 打开 Supabase SQL 编辑器
-访问: https://supabase.com/dashboard/project/iazzehufkcdsfkfyvldj/sql/new
+访问: https://supabase.com/dashboard/project/YOUR_PROJECT_ID/sql/new
 
 ### 步骤 2: 执行数据库模式
 复制 `supabase/schema.sql` 文件的全部内容，粘贴到 SQL 编辑器中并执行。
@@ -38,7 +38,7 @@ npm run dev
 3. 添加以下配置：
    - Client ID: (从 GitHub OAuth App 获取)
    - Client Secret: (从 GitHub OAuth App 获取)
-   - Redirect URL: `https://iazzehufkcdsfkfyvldj.supabase.co/auth/v1/callback`
+   - Redirect URL: `https://YOUR_PROJECT_ID.supabase.co/auth/v1/callback`
 
 ### Google OAuth
 1. 启用 Google provider
@@ -52,8 +52,8 @@ npm run dev
 ### 步骤 2: 配置环境变量
 在 Vercel 项目设置中添加：
 ```
-NEXT_PUBLIC_SUPABASE_URL=https://iazzehufkcdsfkfyvldj.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlhenplaHVma2Nkc2ZrZnl2bGRqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE5ODc5MjYsImV4cCI6MjA2NzU2MzkyNn0.Xk4HNGnOr9E_0Ap3uR_Ejc3U0Xvor8D1KMmrf5PkJs0
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
 ```
 
 ### 步骤 3: 部署
