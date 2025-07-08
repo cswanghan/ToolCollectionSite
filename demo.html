@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>在线工具导航站 - ToolNavi</title>
+    <meta name="description" content="一个极简、无干扰的万能在线工具导航。一键直达，高效解决你的开发、运营和学习需求。">
+    
+    <!-- Tailwind CSS via CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- PWA Manifest (Placeholder) -->
+    <link rel="manifest" href="/site.webmanifest">
+    <meta name="theme-color" content="#ffffff">
+
+    <style>
+        /* 基本样式和字体 */
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        /* 避免CLS (Cumulative Layout Shift) */
+        .app-shell { min-height: 100vh; }
+        /* 页面切换动画 */
+        .page { display: none; }
+        .page.active { display: block; animation: fadeIn 0.3s ease-in-out; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        /* 自定义滚动条样式 (可选) */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #888; border-radius: 4px; }
+        .dark ::-webkit-scrollbar-thumb { background: #555; }
+        ::-webkit-scrollbar-thumb:hover { background: #555; }
+        .dark ::-webkit-scrollbar-thumb:hover { background: #777; }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-200 transition-colors duration-300">
+
+    <div id="app" class="app-shell flex flex-col">
+        <!-- 头部导航 (Header) -->
+        <header class="sticky top-0 z-40 w-full border-b border-slate-200 dark:border-slate-700 bg-slate-50/80 dark:bg-slate-900/80 backdrop-blur-sm">
+            <div class="container mx-auto px-4 h-16 flex items-center justify-between">
+                <!-- LOGO -->
+                <a href="#" id="logo-link" class="flex items-center gap-2 text-xl font-bold">
+                    <svg class="w-7 h-7 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M12 6V3m0 18v-3M5.636 5.636l-1.414-1.414m15.556 15.556l-1.414-1.414M18.364 5.636l-1.414 1.414m-11.314 11.314l-1.414 1.414"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18a6 6 0 100-12 6 6 0 000 12z"></path></svg>
+                    <span>ToolNavi</span>
+                </a>
+
+                <!-- 搜索框 -->
+                <div class="flex-1 max-w-lg mx-4">
+                    <div class="relative">
+                        <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                        <input id="search-input" type="search" placeholder="搜索工具，如 JSON、Color..." class="w-full pl-10 pr-4 py-2 rounded-lg border bg-slate-100 dark:bg-slate-800 border-slate-300 dark:border-slate-600 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition">
+                    </div>
+                </div>
+
+                <!-- 右侧操作 -->
+                <div class="flex items-center gap-4">
+                    <button id="theme-toggle" class="w-10 h-10 rounded-lg flex items-center justify-center hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
+                        <svg id="theme-icon-light" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                        <svg id="theme-icon-dark" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+                    </button>
+                    <button id="login-button" class="px-4 py-2 text-sm font-semibold text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors">登录</button>
+                </div>
+            </div>
+        </header>
+
+        <main class="flex-1 container mx-auto px-4 py-8">
+            <!-- 页面容器 -->
+            <div id="page-container">
+                <!-- 首页 -->
+                <div id="home-page" class="page active">
+                    <!-- 分类导航 -->
+                    <nav id="category-tabs" class="mb-8 border-b border-slate-200 dark:border-slate-700">
+                        <div class="flex space-x-6 -mb-px overflow-x-auto">
+                            <!-- JS 动态渲染 -->
+                        </div>
+                    </nav>
+                    <!-- 工具列表 -->
+                    <div id="home-tool-list" class="space-y-10">
+                        <!-- JS 动态渲染 -->
+                    </div>
+                    <!-- 广告位 -->
+                    <div class="mt-12">
+                        <div class="w-full max-w-[970px] h-[90px] mx-auto bg-slate-200 dark:bg-slate-800 rounded-lg flex items-center justify-center text-slate-500">
+                            [Banner 广告位 970×90]
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 分类列表页 -->
+                <div id="category-page" class="page">
+                    <!-- 面包屑 -->
+                    <div id="category-breadcrumbs" class="mb-4 text-sm text-slate-500 dark:text-slate-400"></div>
+                    <!-- 标题和操作 -->
+                    <div class="flex justify-between items-center mb-6">
+                        <h1 id="category-title" class="text-3xl font-bold"></h1>
+                        <div class="flex items-center gap-4">
+                            <!-- 排序和视图切换 -->
+                            <span class="text-sm">排序: <button class="font-semibold">热度▼</button></span>
+                            <div class="flex items-center gap-1 p-1 rounded-lg bg-slate-200 dark:bg-slate-800">
+                                <button class="p-1.5 rounded-md bg-white dark:bg-slate-700 shadow"><svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM13 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2h-2z"/></svg></button>
+                                <button class="p-1.5 rounded-md"><svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"/></svg></button>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- 工具网格 -->
+                    <div id="category-tool-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                        <!-- JS 动态渲染 -->
+                    </div>
+                </div>
+
+                <!-- 工具详情页 -->
+                <div id="tool-detail-page" class="page">
+                    <!-- 面包屑 -->
+                    <div id="tool-breadcrumbs" class="mb-6 text-sm text-slate-500 dark:text-slate-400"></div>
+                    <div class="max-w-4xl mx-auto">
+                        <div class="flex items-start gap-6 mb-8">
+                            <div id="tool-detail-logo" class="w-20 h-20 rounded-xl bg-slate-200 dark:bg-slate-700 flex items-center justify-center text-3xl font-bold text-slate-500"></div>
+                            <div>
+                                <h1 id="tool-detail-name" class="text-4xl font-bold mb-2"></h1>
+                                <p id="tool-detail-desc" class="text-lg text-slate-600 dark:text-slate-300 mb-3"></p>
+                                <div id="tool-detail-tags" class="flex flex-wrap gap-2"></div>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-4 mb-12">
+                            <a id="tool-detail-use-btn" href="#" target="_blank" class="inline-flex items-center gap-2 px-8 py-3 text-lg font-bold text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-transform hover:scale-105">
+                                👉 立即使用
+                            </a>
+                            <button id="tool-detail-fav-btn" class="flex items-center gap-2 px-6 py-3 text-lg font-semibold border-2 border-slate-300 dark:border-slate-600 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+                                <svg class="w-6 h-6 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.196-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.783-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"></path></svg>
+                                <span>收藏</span>
+                            </button>
+                        </div>
+                        <div class="border-t border-slate-200 dark:border-slate-700 pt-8">
+                            <h2 class="text-2xl font-bold mb-4">⚡ 相关工具</h2>
+                            <div id="related-tools-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                                <!-- JS 动态渲染 -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- 页脚 (Footer) -->
+        <footer class="border-t border-slate-200 dark:border-slate-700">
+            <div class="container mx-auto px-4 py-6 text-center text-sm text-slate-500 dark:text-slate-400">
+                <p>&copy; 2025 ToolNavi. All Rights Reserved. Inspired by PRD. Crafted with ❤️.</p>
+                <p class="mt-2">
+                    <a href="#" class="hover:text-blue-500">关于我们</a> · 
+                    <a href="#" class="hover:text-blue-500">隐私政策</a> · 
+                    <a href="#" class="hover:text-blue-500">联系我们</a>
+                </p>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // --- 数据中心 (Data Center) ---
+        // 模拟从后端/CMS获取的数据
+        const db = {
+            categories: [
+                { id: 'favorites', name: '⭐ 收藏', slug: 'favorites' },
+                { id: 'recent', name: '🕒 最近使用', slug: 'recent' },
+                { id: 'dev', name: '开发工具', slug: 'dev' },
+                { id: 'text', name: '文本工具', slug: 'text' },
+                { id: 'image', name: '图片音影', slug: 'image' },
+                { id: 'life', name: '生活常用', slug: 'life' },
+            ],
+            tools: [
+                // 开发工具
+                { id: 'json-beautifier', cat: 'dev', name: 'JSON 格式化', desc: '支持 JSON 格式化、压缩、校验和高亮。', url: 'http://json.cn', tags: ['JSON', 'Beautify', 'Format', 'Dev'], hot: 95 },
+                { id: 'jwt-decoder', cat: 'dev', name: 'JWT 解码', desc: '在线解码 JWT Token，查看 Header 和 Payload。', url: 'https://jwt.io', tags: ['JWT', 'Auth', 'Decode'], hot: 92 },
+                { id: 'regex-tester', cat: 'dev', name: '正则表达式测试', desc: '实时测试你的正则表达式，支持多种语言。', url: 'https://regex101.com/', tags: ['Regex', 'Test', 'Dev'], hot: 98 },
+                { id: 'timestamp-converter', cat: 'dev', name: '时间戳转换', desc: 'Unix 时间戳和标准日期时间格式互转。', url: 'https://www.tool.lu/timestamp/', tags: ['Timestamp', 'Date', 'Time'], hot: 88 },
+                { id: 'base64-encoder', cat: 'dev', name: 'Base64 编码/解码', desc: '对文本或文件进行 Base64 编码和解码。', url: 'https://www.base64encode.org/', tags: ['Base64', 'Encode', 'Decode'], hot: 85 },
+                { id: 'uuid-generator', cat: 'dev', name: 'UUID 生成器', desc: '一键生成符合标准的 UUID/GUID。', url: 'https://www.uuidgenerator.net/', tags: ['UUID', 'GUID', 'Generator'], hot: 80 },
+                { id: 'diff-checker', cat: 'dev', name: '文本差异对比', desc: '在线比对两个文本或代码的差异。', url: 'https://www.diffchecker.com/', tags: ['Diff', 'Compare', 'Text'], hot: 78 },
+                // 文本工具
+                { id: 'md-editor', cat: 'text', name: 'Markdown 编辑器', desc: '实时预览的 Markdown 在线编辑器。', url: 'https://stackedit.io/', tags: ['Markdown', 'Editor', 'Write'], hot: 90 },
+                { id: 'text-formatter', cat: 'text', name: '文本排版', desc: '自动格式化文本，增加空格、修正标点。', url: 'https://www.tool.lu/text_formatter/', tags: ['Format', 'Typography', 'Text'], hot: 70 },
+                { id: 'word-counter', cat: 'text', name: '字数统计', desc: '实时统计文本的字数、词数和字符数。', url: 'https://wordcounter.net/', tags: ['Count', 'Word', 'Statistics'], hot: 65 },
+                // 图片音影
+                { id: 'image-compressor', cat: 'image', name: '图片压缩', desc: '高效压缩 JPG, PNG, GIF 图片大小。', url: 'https://tinypng.com/', tags: ['Image', 'Compress', 'Optimize'], hot: 96 },
+                { id: 'qr-generator', cat: 'image', name: '二维码生成器', desc: '生成自定义样式的二维码。', url: 'https://www.the-qrcode-generator.com/', tags: ['QR Code', 'Generator'], hot: 82 },
+                { id: 'color-picker', cat: 'image', name: '颜色选择器', desc: '从屏幕或图片上拾取颜色，支持多种格式。', url: 'https://imagecolorpicker.com/', tags: ['Color', 'Picker', 'Design'], hot: 89 },
+                { id: 'favicon-generator', cat: 'image', name: 'Favicon 生成器', desc: '从图片生成各种尺寸的网站图标。', url: 'https://realfavicongenerator.net/', tags: ['Favicon', 'Icon', 'Web'], hot: 75 },
+                // 生活常用
+                { id: 'calculator', cat: 'life', name: '在线计算器', desc: '一个功能强大的在线科学计算器。', url: 'https://www.desmos.com/scientific', tags: ['Calculate', 'Math'], hot: 60 },
+                { id: 'world-clock', cat: 'life', name: '世界时钟', desc: '查看全球主要城市当前时间。', url: 'https://www.timeanddate.com/worldclock/', tags: ['Time', 'World', 'Clock'], hot: 55 },
+            ]
+        };
+
+        // --- 状态管理 (State Management) ---
+        const state = {
+            favorites: JSON.parse(localStorage.getItem('toolNaviFavorites')) || [],
+            recent: JSON.parse(localStorage.getItem('toolNaviRecent')) || [],
+            currentPage: 'home',
+            currentCategory: null,
+            currentTool: null,
+            searchTerm: '',
+        };
+
+        // --- DOM 元素引用 ---
+        const $ = (selector) => document.querySelector(selector);
+        const $$ = (selector) => document.querySelectorAll(selector);
+        const elements = {
+            app: $('#app'),
+            themeToggle: $('#theme-toggle'),
+            lightIcon: $('#theme-icon-light'),
+            darkIcon: $('#theme-icon-dark'),
+            searchInput: $('#search-input'),
+            logoLink: $('#logo-link'),
+            categoryTabs: $('#category-tabs .flex'),
+            homeToolList: $('#home-tool-list'),
+            pages: {
+                home: $('#home-page'),
+                category: $('#category-page'),
+                toolDetail: $('#tool-detail-page'),
+            },
+            category: {
+                breadcrumbs: $('#category-breadcrumbs'),
+                title: $('#category-title'),
+                grid: $('#category-tool-grid'),
+            },
+            toolDetail: {
+                breadcrumbs: $('#tool-breadcrumbs'),
+                logo: $('#tool-detail-logo'),
+                name: $('#tool-detail-name'),
+                desc: $('#tool-detail-desc'),
+                tags: $('#tool-detail-tags'),
+                useBtn: $('#tool-detail-use-btn'),
+                favBtn: $('#tool-detail-fav-btn'),
+                relatedGrid: $('#related-tools-grid'),
+            }
+        };
+
+        // --- 渲染函数 (Render Functions) ---
+
+        /**
+         * 创建单个工具卡片的 HTML
+         * @param {object} tool - 工具对象
+         * @returns {string} - HTML 字符串
+         */
+        const createToolCardHTML = (tool) => {
+            const isFavorite = state.favorites.includes(tool.id);
+            // 如果已收藏，则始终可见；否则，仅在组悬停时可见
+            const favoriteVisibilityClasses = isFavorite ? 'opacity-100' : 'opacity-0 group-hover:opacity-100';
+
+            return `
+                <div class="tool-card group relative bg-white dark:bg-slate-800 rounded-lg shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300 border border-transparent hover:border-blue-500" data-tool-id="${tool.id}">
+                    
+                    <div class="flex items-center p-4 pr-12">
+                        <div class="w-12 h-12 rounded-lg bg-slate-100 dark:bg-slate-700 flex-shrink-0 flex items-center justify-center font-bold text-xl text-slate-500">
+                            ${tool.name.substring(0, 2)}
+                        </div>
+                        <div class="ml-4 flex-1 overflow-hidden">
+                            <h3 class="font-semibold text-slate-900 dark:text-white truncate">${tool.name}</h3>
+                            <p class="text-sm text-slate-500 dark:text-slate-400 truncate">${tool.desc}</p>
+                        </div>
+                    </div>
+
+                    <button class="favorite-btn absolute top-1/2 -translate-y-1/2 right-3 w-10 h-10 flex-shrink-0 rounded-full flex items-center justify-center hover:bg-slate-100 dark:hover:bg-slate-700 transition-opacity duration-200 ${favoriteVisibilityClasses}" data-tool-id="${tool.id}" title="收藏">
+                        <svg class="w-5 h-5 ${isFavorite ? 'text-yellow-400 fill-current' : 'text-slate-400'}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.196-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.783-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"></path></svg>
+                    </button>
+                </div>
+            `;
+        };
+
+        /**
+         * 在首页渲染所有工具，按分类
+         */
+        const renderHome = () => {
+            const visibleCategories = db.categories.filter(c => {
+                if (c.id === 'favorites') return state.favorites.length > 0;
+                if (c.id === 'recent') return state.recent.length > 0;
+                return true;
+            });
+
+            elements.homeToolList.innerHTML = visibleCategories.map(cat => {
+                let toolsForCat;
+                if (cat.id === 'favorites') {
+                    toolsForCat = state.favorites.map(id => db.tools.find(t => t.id === id)).filter(Boolean);
+                } else if (cat.id === 'recent') {
+                    toolsForCat = state.recent.map(id => db.tools.find(t => t.id === id)).filter(Boolean);
+                } else {
+                    toolsForCat = db.tools.filter(tool => tool.cat === cat.slug);
+                }
+                
+                if(toolsForCat.length === 0) return '';
+
+                return `
+                    <section id="category-${cat.slug}">
+                        <h2 class="text-2xl font-bold mb-4">${cat.name}</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                            ${toolsForCat.map(createToolCardHTML).join('')}
+                        </div>
+                    </section>
+                `;
+            }).join('');
+            attachCardListeners();
+        };
+        
+        /**
+         * 渲染搜索结果
+         */
+        const renderSearchResults = (term) => {
+            const lowerTerm = term.toLowerCase();
+            const results = db.tools.filter(tool => 
+                tool.name.toLowerCase().includes(lowerTerm) ||
+                tool.desc.toLowerCase().includes(lowerTerm) ||
+                tool.tags.some(tag => tag.toLowerCase().includes(lowerTerm))
+            );
+
+            if (results.length === 0) {
+                elements.homeToolList.innerHTML = `<div class="text-center py-12 text-slate-500">
+                    <p class="text-xl">找不到与 "${term}" 相关的工具</p>
+                    <p class="mt-2">请尝试其他关键词。</p>
+                </div>`;
+                return;
+            }
+
+            elements.homeToolList.innerHTML = `
+                <section>
+                    <h2 class="text-2xl font-bold mb-4">搜索结果 (${results.length})</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        ${results.map(createToolCardHTML).join('')}
+                    </div>
+                </section>
+            `;
+            attachCardListeners();
+        };
+
+        /**
+         * 渲染分类页
+         */
+        const renderCategoryPage = (slug) => {
+            const category = db.categories.find(c => c.slug === slug);
+            if (!category) {
+                navigateTo('home');
+                return;
+            }
+            state.currentCategory = category;
+
+            const toolsForCat = db.tools.filter(t => t.cat === slug).sort((a, b) => b.hot - a.hot);
+            
+            elements.category.breadcrumbs.innerHTML = `<a href="#" class="hover:text-blue-500 page-link" data-page="home">首页</a> › ${category.name}`;
+            elements.category.title.textContent = category.name;
+            elements.category.grid.innerHTML = toolsForCat.map(createToolCardHTML).join('');
+            
+            attachCardListeners();
+            attachPageLinkListeners();
+        };
+
+        /**
+         * 渲染工具详情页
+         */
+        const renderToolDetailPage = (toolId) => {
+            const tool = db.tools.find(t => t.id === toolId);
+            if (!tool) {
+                navigateTo('home');
+                return;
+            }
+            state.currentTool = tool;
+            const category = db.categories.find(c => c.slug === tool.cat);
+
+            // 面包屑
+            elements.toolDetail.breadcrumbs.innerHTML = `
+                <a href="#" class="hover:text-blue-500 page-link" data-page="home">首页</a> › 
+                <a href="#" class="hover:text-blue-500 page-link" data-page="category" data-slug="${category.slug}">${category.name}</a> › 
+                ${tool.name}
+            `;
+
+            // 主要信息
+            elements.toolDetail.logo.textContent = tool.name.substring(0, 2);
+            elements.toolDetail.name.textContent = tool.name;
+            elements.toolDetail.desc.textContent = tool.desc;
+            elements.toolDetail.tags.innerHTML = tool.tags.map(tag => 
+                `<span class="px-2 py-1 bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-300 text-xs font-medium rounded-full">#${tag}</span>`
+            ).join('');
+            
+            // 操作按钮
+            elements.toolDetail.useBtn.href = tool.url;
+            elements.toolDetail.useBtn.dataset.toolId = tool.id;
+            updateFavoriteButton(elements.toolDetail.favBtn, tool.id);
+
+            // 相关工具 (同分类下，排除自身)
+            const relatedTools = db.tools
+                .filter(t => t.cat === tool.cat && t.id !== tool.id)
+                .sort(() => 0.5 - Math.random()) // 随机排序
+                .slice(0, 3);
+            elements.toolDetail.relatedGrid.innerHTML = relatedTools.map(createToolCardHTML).join('');
+
+            attachCardListeners();
+            attachPageLinkListeners();
+        };
+
+        /**
+         * 渲染分类导航标签
+         */
+        const renderCategoryTabs = () => {
+            elements.categoryTabs.innerHTML = db.categories
+                .filter(c => c.id !== 'favorites' && c.id !== 'recent')
+                .map((cat, index) => `
+                <button class="category-tab-btn py-3 px-1 border-b-2 font-semibold transition-colors duration-200 ${index === 0 ? 'border-blue-500 text-blue-600 dark:text-blue-400' : 'border-transparent text-slate-500 hover:border-slate-300 dark:hover:border-slate-600 hover:text-slate-700 dark:hover:text-slate-300'}" data-slug="${cat.slug}">
+                    ${cat.name}
+                </button>
+            `).join('');
+            
+            // 默认选中第一个分类
+            if (elements.homeToolList.children.length > 0) {
+                 const firstCategorySection = elements.homeToolList.querySelector('section');
+                 if(firstCategorySection) {
+                    firstCategorySection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                 }
+            }
+        };
+
+
+        // --- 交互逻辑 (Interaction Logic) ---
+
+        /**
+         * 页面导航
+         * @param {string} pageName - 'home', 'category', 'toolDetail'
+         * @param {object} [params] - 导航参数，如 { slug: 'dev' } 或 { toolId: 'json-beautifier' }
+         */
+        const navigateTo = (pageName, params = {}) => {
+            state.currentPage = pageName;
+            Object.values(elements.pages).forEach(p => p.classList.remove('active'));
+
+            window.scrollTo(0, 0);
+
+            switch(pageName) {
+                case 'home':
+                    elements.pages.home.classList.add('active');
+                    state.searchTerm = '';
+                    elements.searchInput.value = '';
+                    renderHome();
+                    break;
+                case 'category':
+                    elements.pages.category.classList.add('active');
+                    renderCategoryPage(params.slug);
+                    break;
+                case 'toolDetail':
+                    elements.pages.toolDetail.classList.add('active');
+                    renderToolDetailPage(params.toolId);
+                    break;
+            }
+        };
+
+        /**
+         * 切换收藏状态
+         * @param {string} toolId - 工具ID
+         */
+        const toggleFavorite = (toolId) => {
+            const index = state.favorites.indexOf(toolId);
+            if (index > -1) {
+                state.favorites.splice(index, 1);
+            } else {
+                state.favorites.unshift(toolId);
+            }
+            localStorage.setItem('toolNaviFavorites', JSON.stringify(state.favorites));
+            
+            // 更新所有相关的按钮状态
+            $$(`.favorite-btn[data-tool-id="${toolId}"]`).forEach(btn => updateFavoriteButton(btn, toolId));
+            if(state.currentPage === 'toolDetail' && state.currentTool.id === toolId) {
+                updateFavoriteButton(elements.toolDetail.favBtn, toolId);
+            }
+
+            // 如果在首页，重新渲染以显示/隐藏收藏分类
+            if (state.currentPage === 'home' && state.searchTerm === '') {
+                renderHome();
+            }
+        };
+
+        /**
+         * 更新单个收藏按钮的UI
+         */
+        const updateFavoriteButton = (btn, toolId) => {
+            const isFavorite = state.favorites.includes(toolId);
+            const svg = btn.querySelector('svg');
+            const span = btn.querySelector('span');
+
+            // 更新卡片上的按钮
+            btn.classList.toggle('opacity-100', isFavorite);
+            btn.classList.toggle('opacity-0', !isFavorite);
+
+            if (svg) {
+                svg.classList.toggle('text-yellow-400', isFavorite);
+                svg.classList.toggle('fill-current', isFavorite);
+                svg.classList.toggle('text-slate-400', !isFavorite);
+            }
+            // 更新详情页的按钮
+            if (span) {
+                span.textContent = isFavorite ? '已收藏' : '收藏';
+            }
+        };
+
+        /**
+         * 记录最近使用的工具
+         */
+        const recordRecentTool = (toolId) => {
+            state.recent = state.recent.filter(id => id !== toolId); // 移除旧记录
+            state.recent.unshift(toolId); // 添加到最前
+            if (state.recent.length > 5) { // 保持最多5条记录
+                state.recent.pop();
+            }
+            localStorage.setItem('toolNaviRecent', JSON.stringify(state.recent));
+        };
+
+        /**
+         * 主题切换
+         */
+        const handleThemeToggle = () => {
+            const isDark = document.documentElement.classList.toggle('dark');
+            localStorage.setItem('toolNaviTheme', isDark ? 'dark' : 'light');
+            elements.lightIcon.classList.toggle('hidden', isDark);
+            elements.darkIcon.classList.toggle('hidden', !isDark);
+        };
+
+        /**
+         * 初始化主题
+         */
+        const initTheme = () => {
+            const savedTheme = localStorage.getItem('toolNaviTheme');
+            if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                document.documentElement.classList.add('dark');
+                elements.lightIcon.classList.add('hidden');
+                elements.darkIcon.classList.remove('hidden');
+            }
+        };
+
+        // --- 事件监听器绑定 ---
+        
+        /**
+         * 绑定卡片点击事件（区分卡片本身和收藏按钮）
+         */
+        const attachCardListeners = () => {
+            $$('.tool-card').forEach(card => {
+                card.addEventListener('click', (e) => {
+                    // 如果点击的是收藏按钮，则不跳转
+                    if (e.target.closest('.favorite-btn')) {
+                        return;
+                    }
+                    const toolId = card.dataset.toolId;
+                    navigateTo('toolDetail', { toolId });
+                });
+            });
+
+            $$('.favorite-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation(); // 阻止事件冒泡到卡片
+                    const toolId = btn.dataset.toolId;
+                    toggleFavorite(toolId);
+                });
+            });
+        };
+        
+        /**
+         * 绑定页面链接点击事件（面包屑等）
+         */
+        const attachPageLinkListeners = () => {
+             $$('.page-link').forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const page = link.dataset.page;
+                    const slug = link.dataset.slug;
+                    navigateTo(page, { slug });
+                });
+            });
+        };
+        
+        // 绑定所有事件
+        const bindEvents = () => {
+            elements.themeToggle.addEventListener('click', handleThemeToggle);
+
+            elements.logoLink.addEventListener('click', (e) => {
+                e.preventDefault();
+                navigateTo('home');
+            });
+            
+            elements.searchInput.addEventListener('input', (e) => {
+                const term = e.target.value.trim();
+                state.searchTerm = term;
+                if (term) {
+                    renderSearchResults(term);
+                } else {
+                    renderHome();
+                }
+                // 在搜索时，确保我们在首页视图
+                if(state.currentPage !== 'home') {
+                    Object.values(elements.pages).forEach(p => p.classList.remove('active'));
+                    elements.pages.home.classList.add('active');
+                    state.currentPage = 'home';
+                }
+            });
+
+            elements.categoryTabs.addEventListener('click', (e) => {
+                const button = e.target.closest('.category-tab-btn');
+                if (!button) return;
+
+                // 更新Tab样式
+                $$('.category-tab-btn').forEach(btn => {
+                    btn.classList.remove('border-blue-500', 'text-blue-600', 'dark:text-blue-400');
+                    btn.classList.add('border-transparent', 'text-slate-500');
+                });
+                button.classList.add('border-blue-500', 'text-blue-600', 'dark:text-blue-400');
+                button.classList.remove('border-transparent', 'text-slate-500');
+
+                // 滚动到对应分类
+                const slug = button.dataset.slug;
+                const section = $(`#category-${slug}`);
+                if (section) {
+                    section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+
+            // 详情页 "立即使用" 按钮
+            elements.toolDetail.useBtn.addEventListener('click', (e) => {
+                const toolId = e.currentTarget.dataset.toolId;
+                if (toolId) {
+                    recordRecentTool(toolId);
+                    // 模拟跳转统计
+                    console.log('JUMP_TRACKING:', {
+                        tool_id: toolId,
+                        ts: new Date().toISOString(),
+                        referrer: document.referrer || 'direct',
+                    });
+                }
+            });
+
+            // 详情页收藏按钮
+            elements.toolDetail.favBtn.addEventListener('click', (e) => {
+                if (state.currentTool) {
+                    toggleFavorite(state.currentTool.id);
+                }
+            });
+        };
+
+        // --- 初始化 ---
+        const init = () => {
+            initTheme();
+            renderCategoryTabs();
+            navigateTo('home');
+            bindEvents();
+        };
+
+        init();
+    });
+    </script>
+</body>
+</html>
+
