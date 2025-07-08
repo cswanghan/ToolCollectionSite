@@ -1,6 +1,7 @@
 import { CategoryTabs } from '@/components/shared/CategoryTabs'
 import { ToolCard } from '@/components/shared/ToolCard'
-import { categories, searchTools } from '@/lib/data/tools'
+import { getCategories } from '@/lib/services/categories'
+import { getTools } from '@/lib/services/tools'
 
 export default async function SearchPage({
   searchParams,
@@ -9,7 +10,11 @@ export default async function SearchPage({
 }) {
   const params = await searchParams
   const query = params.q || ''
-  const results = query ? searchTools(query) : []
+  
+  const [categories, results] = await Promise.all([
+    getCategories(),
+    query ? getTools({ search: query }) : Promise.resolve([])
+  ])
   
   return (
     <div className="container mx-auto px-4 py-8">

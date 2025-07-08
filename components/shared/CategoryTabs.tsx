@@ -2,8 +2,11 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Category } from '@/lib/types'
+import { Database } from '@/lib/supabase/types'
 import { cn } from '@/lib/utils'
+import * as Icons from 'lucide-react'
+
+type Category = Database['public']['Tables']['categories']['Row']
 
 interface CategoryTabsProps {
   categories: Category[]
@@ -30,21 +33,25 @@ export function CategoryTabs({ categories, currentCategoryId }: CategoryTabsProp
           全部
         </Link>
         
-        {categories.map((category) => (
-          <Link
-            key={category.id}
-            href={`/c/${category.slug}`}
-            className={cn(
-              "inline-flex items-center py-4 px-1 border-b-2 text-sm font-medium whitespace-nowrap transition-colors",
-              currentCategoryId === category.id
-                ? "border-blue-600 text-blue-600 dark:text-blue-400"
-                : "border-transparent text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:border-slate-300 dark:hover:border-slate-600"
-            )}
-          >
-            <span className="mr-2">{category.icon}</span>
-            {category.name}
-          </Link>
-        ))}
+        {categories.map((category) => {
+          const IconComponent = (Icons as any)[category.icon || 'Grid3x3'] || Icons.Grid3x3
+          
+          return (
+            <Link
+              key={category.id}
+              href={`/c/${category.slug}`}
+              className={cn(
+                "inline-flex items-center py-4 px-1 border-b-2 text-sm font-medium whitespace-nowrap transition-colors",
+                currentCategoryId === category.id
+                  ? "border-blue-600 text-blue-600 dark:text-blue-400"
+                  : "border-transparent text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:border-slate-300 dark:hover:border-slate-600"
+              )}
+            >
+              <IconComponent className="w-4 h-4 mr-2" />
+              {category.name}
+            </Link>
+          )
+        })}
       </div>
     </nav>
   )

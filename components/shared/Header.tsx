@@ -5,6 +5,7 @@ import { Search } from 'lucide-react'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { ThemeToggle } from '@/components/shared/ThemeToggle'
+import { AuthButton } from '@/components/auth/AuthButton'
 
 export function Header() {
   const [searchQuery, setSearchQuery] = useState('')
@@ -41,11 +42,9 @@ export function Header() {
           </div>
         </form>
 
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2">
           <ThemeToggle />
-          <button className="px-4 py-2 text-sm font-semibold text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors">
-            登录
-          </button>
+          <AuthButton />
         </div>
       </div>
     </header>
