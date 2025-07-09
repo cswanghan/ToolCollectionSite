@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/providers/theme-provider";
 import { Header } from "@/components/shared/Header";
+import { CookieConsent } from "@/components/consent/CookieConsent";
 import Script from "next/script";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -22,6 +23,34 @@ export default function RootLayout({
       <head>
         {/* Google AdSense Verification */}
         <meta name="google-adsense-account" content="ca-pub-4876317440241925" />
+        
+        {/* Google Consent Mode */}
+        <Script
+          id="google-consent-mode"
+          strategy="afterInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              
+              // 默认拒绝所有同意类型（符合GDPR）
+              gtag('consent', 'default', {
+                'ad_storage': 'denied',
+                'analytics_storage': 'denied',
+                'ad_user_data': 'denied',
+                'ad_personalization': 'denied',
+                'wait_for_update': 500
+              });
+            `,
+          }}
+        />
+        
+        {/* Google Tag Manager */}
+        <Script
+          async
+          src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"
+          strategy="afterInteractive"
+        />
         
         {/* Google AdSense Script */}
         <Script
@@ -44,6 +73,7 @@ export default function RootLayout({
               {children}
             </main>
           </div>
+          <CookieConsent />
         </ThemeProvider>
       </body>
     </html>
