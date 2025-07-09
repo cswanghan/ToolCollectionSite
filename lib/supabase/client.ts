@@ -9,5 +9,8 @@ export function createClient() {
     throw new Error('Missing Supabase environment variables')
   }
   
-  return createBrowserClient<Database>(url, key)
+  // 清理API key中的换行符和空格
+  const cleanKey = key.replace(/\s+/g, '').trim()
+  
+  return createBrowserClient<Database>(url, cleanKey)
 }

@@ -10,11 +10,14 @@ export async function createClient() {
     throw new Error('Missing Supabase environment variables')
   }
   
+  // 清理API key中的换行符和空格
+  const cleanKey = key.replace(/\s+/g, '').trim()
+  
   const cookieStore = await cookies()
 
   return createServerClient<Database>(
     url,
-    key,
+    cleanKey,
     {
       cookies: {
         getAll() {

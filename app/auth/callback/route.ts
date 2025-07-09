@@ -11,9 +11,10 @@ export async function GET(request: Request) {
   if (code) {
     try {
       const cookieStore = await cookies()
+      const cleanKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!.replace(/\s+/g, '').trim()
       const supabase = createServerClient(
         process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+        cleanKey,
         {
           cookies: {
             getAll() {
