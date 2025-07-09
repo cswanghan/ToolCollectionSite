@@ -20,6 +20,9 @@ export default function RootLayout({
   return (
     <html lang="zh-CN" suppressHydrationWarning>
       <head>
+        {/* Google AdSense Verification */}
+        <meta name="google-adsense-account" content="ca-pub-4876317440241925" />
+        
         {/* Google AdSense Script */}
         <Script
           async
