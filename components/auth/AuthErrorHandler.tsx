@@ -1,10 +1,10 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { useToast } from '@/hooks/use-toast'
 
-export function AuthErrorHandler() {
+function AuthErrorContent() {
   const searchParams = useSearchParams()
   const { toast } = useToast()
 
@@ -41,4 +41,12 @@ export function AuthErrorHandler() {
   }, [searchParams, toast])
 
   return null
+}
+
+export function AuthErrorHandler() {
+  return (
+    <Suspense fallback={null}>
+      <AuthErrorContent />
+    </Suspense>
+  )
 }
