@@ -39,30 +39,39 @@ export function AuthButton() {
 
   const handleLogin = async (provider: 'github' | 'google') => {
     try {
-      const response = await fetch('/auth/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
+      const redirectTo = process.env.NODE_ENV === 'production' 
+        ? `${window.location.origin}/auth/callback`
+        : 'http://localhost:3000/auth/callback'
+        
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider,
+        options: {
+          redirectTo,
+          queryParams: {
+            access_type: 'offline',
+            prompt: 'consent',
+          },
         },
-        body: JSON.stringify({ provider }),
       })
       
-      const data = await response.json()
-      
-      if (data.url) {
-        window.location.href = data.url
+      if (error) {
+        console.error('OAuth error:', error)
+        alert(`登录失败: ${error.message}`)
       }
     } catch (error) {
       console.error('Login error:', error)
+      alert('登录过程中出现错误，请稍后重试')
     }
   }
 
   const handleLogout = async () => {
     try {
-      await fetch('/auth/logout', {
-        method: 'POST',
-      })
-      router.refresh()
+      const { error } = await supabase.auth.signOut()
+      if (error) {
+        console.error('Logout error:', error.message)
+      } else {
+        router.refresh()
+      }
     } catch (error) {
       console.error('Logout error:', error)
     }
@@ -82,7 +91,7 @@ export function AuthButton() {
             <User className="h-5 w-5" />
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="w-48">
+        <DropdownMenuContent align="end" className="w-56">
           <DropdownMenuItem onClick={() => handleLogin('github')}>
             <Github className="mr-2 h-4 w-4" />
             使用 GitHub 登录
@@ -124,9 +133,10 @@ export function AuthButton() {
           />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-48">
-        <div className="px-2 py-1.5 text-sm text-slate-600 dark:text-slate-400">
-          {user.email}
+      <DropdownMenuContent align="end" className="w-56">
+        <div className="px-2 py-1.5">
+          <p className="text-sm font-medium">{user.user_metadata?.full_name || user.user_metadata?.name || '用户'}</p>
+          <p className="text-xs text-slate-600 dark:text-slate-400">{user.email}</p>
         </div>
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={handleLogout}>

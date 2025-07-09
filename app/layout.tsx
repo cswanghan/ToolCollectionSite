@@ -3,6 +3,8 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/providers/theme-provider";
 import { Header } from "@/components/shared/Header";
+import { AuthErrorHandler } from "@/components/auth/AuthErrorHandler";
+import { Toaster } from "@/components/ui/toaster";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -27,10 +29,12 @@ export default function RootLayout({
         >
           <div className="min-h-screen flex flex-col">
             <Header />
+            <AuthErrorHandler />
             <main className="flex-1">
               {children}
             </main>
           </div>
+          <Toaster />
         </ThemeProvider>
       </body>
     </html>

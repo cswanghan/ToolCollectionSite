@@ -5,12 +5,26 @@ export async function GET(request: Request) {
   const requestUrl = new URL(request.url)
   const code = requestUrl.searchParams.get('code')
   const origin = requestUrl.origin
+  const next = requestUrl.searchParams.get('next') ?? '/'
 
   if (code) {
-    const supabase = await createClient()
-    await supabase.auth.exchangeCodeForSession(code)
+    try {
+      const supabase = await createClient()
+      const { error } = await supabase.auth.exchangeCodeForSession(code)
+      
+      if (error) {
+        console.error('Auth callback error:', error)
+        return NextResponse.redirect(`${origin}/?error=auth_callback_error&message=${encodeURIComponent(error.message)}`)
+      }
+      
+      // 成功后重定向到指定页面
+      return NextResponse.redirect(`${origin}${next}`)
+    } catch (error) {
+      console.error('Auth callback error:', error)
+      return NextResponse.redirect(`${origin}/?error=auth_callback_error`)
+    }
   }
 
-  // URL to redirect to after sign in process completes
-  return NextResponse.redirect(`${origin}/`)
+  // 没有 code 参数，重定向到首页
+  return NextResponse.redirect(`${origin}/?error=missing_code`)
 }
