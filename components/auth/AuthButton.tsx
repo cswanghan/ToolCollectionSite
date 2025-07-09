@@ -39,9 +39,11 @@ export function AuthButton() {
 
   const handleLogin = async (provider: 'github' | 'google') => {
     try {
+      // 获取当前端口
+      const currentPort = window.location.port || (window.location.protocol === 'https:' ? '443' : '80')
       const redirectTo = process.env.NODE_ENV === 'production' 
         ? `${window.location.origin}/auth/callback`
-        : 'http://localhost:3000/auth/callback'
+        : `http://localhost:${currentPort}/auth/callback`
         
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider,

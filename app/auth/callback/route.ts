@@ -42,8 +42,8 @@ export async function GET(request: Request) {
         return NextResponse.redirect(`${origin}/?error=auth_callback_error&message=${encodeURIComponent(error.message)}`)
       }
       
-      // 成功后重定向到指定页面
-      return NextResponse.redirect(`${origin}${next}`)
+      // 成功后重定向到callback页面，而不是直接重定向到首页
+      return NextResponse.redirect(`${origin}/auth/callback`)
     } catch (error) {
       console.error('Auth callback error:', error)
       return NextResponse.redirect(`${origin}/?error=auth_callback_error`)
