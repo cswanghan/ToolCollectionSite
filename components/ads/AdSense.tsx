@@ -34,7 +34,7 @@ export function AdSense({
       {/* Google AdSense Script */}
       <Script
         async
-        src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-YOUR_PUBLISHER_ID"
+        src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4876317440241925"
         crossOrigin="anonymous"
         strategy="afterInteractive"
       />
@@ -46,7 +46,7 @@ export function AdSense({
             display: 'block',
             ...style,
           }}
-          data-ad-client="ca-pub-YOUR_PUBLISHER_ID"
+          data-ad-client="ca-pub-4876317440241925"
           data-ad-slot={slot}
           data-ad-format={format}
           data-full-width-responsive={responsive ? 'true' : 'false'}
@@ -58,9 +58,10 @@ export function AdSense({
 
 // 预定义的广告位组件
 export function BannerAd({ className }: { className?: string }) {
+  const slot = process.env.NEXT_PUBLIC_ADSENSE_BANNER_SLOT || 'YOUR_BANNER_SLOT_ID'
   return (
     <AdSense
-      slot="YOUR_BANNER_SLOT_ID"
+      slot={slot}
       format="horizontal"
       className={className}
       style={{ minHeight: '90px' }}
@@ -69,9 +70,10 @@ export function BannerAd({ className }: { className?: string }) {
 }
 
 export function SquareAd({ className }: { className?: string }) {
+  const slot = process.env.NEXT_PUBLIC_ADSENSE_SQUARE_SLOT || 'YOUR_SQUARE_SLOT_ID'
   return (
     <AdSense
-      slot="YOUR_SQUARE_SLOT_ID"
+      slot={slot}
       format="rectangle"
       className={className}
       style={{ minHeight: '250px' }}
@@ -80,9 +82,10 @@ export function SquareAd({ className }: { className?: string }) {
 }
 
 export function SidebarAd({ className }: { className?: string }) {
+  const slot = process.env.NEXT_PUBLIC_ADSENSE_SIDEBAR_SLOT || 'YOUR_SIDEBAR_SLOT_ID'
   return (
     <AdSense
-      slot="YOUR_SIDEBAR_SLOT_ID"
+      slot={slot}
       format="vertical"
       className={className}
       style={{ minHeight: '600px' }}
