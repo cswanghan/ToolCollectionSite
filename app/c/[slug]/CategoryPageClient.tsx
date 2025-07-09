@@ -14,6 +14,7 @@ import {
 import { LayoutGrid, List, ArrowUpDown, Clock, MousePointer } from 'lucide-react'
 import { Database } from '@/lib/supabase/types'
 import { getTools, ToolWithCategory } from '@/lib/services/tools'
+import { SquareAdPlaceholder } from '@/components/ads/AdPlaceholder'
 import * as Icons from 'lucide-react'
 
 type Category = Database['public']['Tables']['categories']['Row']
@@ -141,6 +142,11 @@ export function CategoryPageClient({ category, categories, initialTools }: Categ
           ))}
         </div>
       )}
+      
+      {/* 广告位 */}
+      <div className="mt-12 flex justify-center">
+        <SquareAdPlaceholder />
+      </div>
     </div>
   )
 }

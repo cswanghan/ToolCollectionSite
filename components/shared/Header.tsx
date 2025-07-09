@@ -5,7 +5,6 @@ import { Search } from 'lucide-react'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { ThemeToggle } from '@/components/shared/ThemeToggle'
-import { AuthButton } from '@/components/auth/AuthButton'
 
 export function Header() {
   const [searchQuery, setSearchQuery] = useState('')
@@ -44,7 +43,6 @@ export function Header() {
 
         <div className="flex items-center gap-2">
           <ThemeToggle />
-          <AuthButton />
         </div>
       </div>
     </header>
