@@ -22,7 +22,10 @@ export function AdSense({
     try {
       // 推送广告
       if (typeof window !== 'undefined' && (window as any).adsbygoogle) {
+        console.log('AdSense: Pushing ad unit', { slot, format })
         ;((window as any).adsbygoogle = (window as any).adsbygoogle || []).push({})
+      } else {
+        console.warn('AdSense: adsbygoogle not loaded yet')
       }
     } catch (err) {
       console.error('AdSense error:', err)
