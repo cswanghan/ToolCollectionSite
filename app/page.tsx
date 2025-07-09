@@ -2,7 +2,7 @@ import { CategoryTabs } from '@/components/shared/CategoryTabs'
 import { ToolCard } from '@/components/shared/ToolCard'
 import { getCategories } from '@/lib/services/categories'
 import { getTools } from '@/lib/services/tools'
-import { BannerAdPlaceholder } from '@/components/ads/AdPlaceholder'
+import { InArticleAd } from '@/components/ads/InArticleAd'
 import * as Icons from 'lucide-react'
 
 export default async function HomePage() {
@@ -47,9 +47,7 @@ export default async function HomePage() {
       </div>
       
       {/* 广告位 */}
-      <div className="mt-12 flex justify-center">
-        <BannerAdPlaceholder />
-      </div>
+      <InArticleAd />
     </div>
   )
 }

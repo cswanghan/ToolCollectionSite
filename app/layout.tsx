@@ -4,6 +4,7 @@ import "./globals.css";
 import { ThemeProvider } from "@/providers/theme-provider";
 import { Header } from "@/components/shared/Header";
 import { CookieConsent } from "@/components/consent/CookieConsent";
+import { AutoAds } from "@/components/ads/AutoAds";
 import Script from "next/script";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -74,6 +75,7 @@ export default function RootLayout({
             </main>
           </div>
           <CookieConsent />
+          <AutoAds />
         </ThemeProvider>
       </body>
     </html>
