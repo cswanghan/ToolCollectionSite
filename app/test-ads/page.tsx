@@ -1,7 +1,6 @@
 'use client'
 
 import { BannerAd, SquareAd, SidebarAd } from '@/components/ads/AdSense'
-import { BannerAdPlaceholder, SquareAdPlaceholder, SidebarAdPlaceholder } from '@/components/ads/AdPlaceholder'
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 
@@ -66,33 +65,38 @@ export default function TestAdsPage() {
 
       <div className="space-y-8">
         <section>
-          <h2 className="text-2xl font-semibold mb-4">横幅广告 (728×90)</h2>
-          <div className="border-2 border-dashed border-gray-300 p-4 rounded">
-            {showRealAds ? <BannerAd /> : <BannerAdPlaceholder />}
+          <h2 className="text-2xl font-semibold mb-4">自动广告测试</h2>
+          <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+            <p className="text-sm">
+              当前使用AdSense自动广告，Google会自动在页面最佳位置插入广告。
+              如果已启用自动广告并接受Cookie同意，广告将在几分钟内显示。
+            </p>
           </div>
-          <p className="text-sm text-gray-600 mt-2">
-            环境变量: NEXT_PUBLIC_ADSENSE_BANNER_SLOT
-          </p>
         </section>
 
         <section>
-          <h2 className="text-2xl font-semibold mb-4">方形广告 (300×250)</h2>
-          <div className="border-2 border-dashed border-gray-300 p-4 rounded inline-block">
-            {showRealAds ? <SquareAd /> : <SquareAdPlaceholder />}
-          </div>
-          <p className="text-sm text-gray-600 mt-2">
-            环境变量: NEXT_PUBLIC_ADSENSE_SQUARE_SLOT
-          </p>
-        </section>
-
-        <section>
-          <h2 className="text-2xl font-semibold mb-4">侧边广告 (160×600)</h2>
-          <div className="border-2 border-dashed border-gray-300 p-4 rounded inline-block">
-            {showRealAds ? <SidebarAd /> : <SidebarAdPlaceholder />}
-          </div>
-          <p className="text-sm text-gray-600 mt-2">
-            环境变量: NEXT_PUBLIC_ADSENSE_SIDEBAR_SLOT
-          </p>
+          <h2 className="text-2xl font-semibold mb-4">手动广告单元（如需要）</h2>
+          {showRealAds && (
+            <div className="space-y-4">
+              <div className="border-2 border-dashed border-gray-300 p-4 rounded">
+                <h3 className="text-lg mb-2">横幅广告</h3>
+                <BannerAd />
+              </div>
+              <div className="border-2 border-dashed border-gray-300 p-4 rounded">
+                <h3 className="text-lg mb-2">方形广告</h3>
+                <SquareAd />
+              </div>
+              <div className="border-2 border-dashed border-gray-300 p-4 rounded">
+                <h3 className="text-lg mb-2">侧边广告</h3>
+                <SidebarAd />
+              </div>
+            </div>
+          )}
+          {!showRealAds && (
+            <p className="text-sm text-gray-600">
+              勾选上方复选框来显示手动广告单元（需要配置Slot ID）
+            </p>
+          )}
         </section>
       </div>
 
