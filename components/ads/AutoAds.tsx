@@ -3,6 +3,13 @@
 import { useEffect } from 'react'
 import Script from 'next/script'
 
+// 声明 window.adsbygoogle 类型
+declare global {
+  interface Window {
+    adsbygoogle?: any[]
+  }
+}
+
 export function AutoAds() {
   useEffect(() => {
     // 检查是否已有用户同意
