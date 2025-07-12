@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/providers/theme-provider";
 import { Header } from "@/components/shared/Header";
+import { Footer } from "@/components/shared/Footer";
 import { CookieConsent } from "@/components/consent/CookieConsent";
 import { AutoAds } from "@/components/ads/AutoAds";
 import Script from "next/script";
@@ -73,6 +74,7 @@ export default function RootLayout({
             <main className="flex-1">
               {children}
             </main>
+            <Footer />
           </div>
           <CookieConsent />
           <AutoAds />

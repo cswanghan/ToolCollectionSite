@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { ExternalLink, Star, ArrowLeft } from 'lucide-react'
 import { ToolWithCategory, trackToolClick } from '@/lib/services/tools'
+import { getToolDetailedDescription, getToolFeatures, getToolUseCases } from '@/lib/utils/tool-content'
 
 interface ToolDetailClientProps {
   tool: ToolWithCategory
@@ -68,6 +69,26 @@ export function ToolDetailClient({ tool, relatedTools }: ToolDetailClientProps) 
             <h1 className="text-3xl font-bold mb-2">{tool.name}</h1>
             <p className="text-lg text-slate-600 dark:text-slate-400">{tool.description}</p>
           </div>
+        </div>
+        
+        {/* 工具详细介绍 */}
+        <div className="prose prose-slate dark:prose-invert max-w-none mb-6">
+          <h2 className="text-xl font-semibold mb-3">关于 {tool.name}</h2>
+          <p className="text-slate-600 dark:text-slate-400 mb-4">
+            {getToolDetailedDescription(tool)}
+          </p>
+          
+          <h3 className="text-lg font-semibold mb-2">主要功能</h3>
+          <ul className="list-disc list-inside space-y-1 text-slate-600 dark:text-slate-400 mb-4">
+            {getToolFeatures(tool).map((feature, index) => (
+              <li key={index}>{feature}</li>
+            ))}
+          </ul>
+          
+          <h3 className="text-lg font-semibold mb-2">使用场景</h3>
+          <p className="text-slate-600 dark:text-slate-400">
+            {getToolUseCases(tool)}
+          </p>
         </div>
         
         <div className="flex flex-wrap gap-2 mb-6">

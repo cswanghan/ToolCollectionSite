@@ -15,6 +15,7 @@ import { LayoutGrid, List, ArrowUpDown, Clock, MousePointer } from 'lucide-react
 import { Database } from '@/lib/supabase/types'
 import { getTools, ToolWithCategory } from '@/lib/services/tools'
 import * as Icons from 'lucide-react'
+import { getCategoryDescription } from '@/lib/utils/category-content'
 
 type Category = Database['public']['Tables']['categories']['Row']
 
@@ -72,6 +73,11 @@ export function CategoryPageClient({ category, categories, initialTools }: Categ
         <p className="text-slate-600 dark:text-slate-400 mt-2">
           共 {tools.length} 个工具
         </p>
+        <div className="mt-4 p-4 bg-slate-50 dark:bg-slate-800 rounded-lg">
+          <p className="text-slate-700 dark:text-slate-300">
+            {getCategoryDescription(category.slug)}
+          </p>
+        </div>
       </div>
       
       {/* 工具栏 */}

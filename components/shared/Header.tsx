@@ -41,6 +41,21 @@ export function Header() {
           </div>
         </form>
 
+        <nav className="hidden md:flex items-center gap-4 mr-4">
+          <Link 
+            href="/guide" 
+            className="text-sm font-medium text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100 transition-colors"
+          >
+            使用指南
+          </Link>
+          <Link 
+            href="/about" 
+            className="text-sm font-medium text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100 transition-colors"
+          >
+            关于我们
+          </Link>
+        </nav>
+        
         <div className="flex items-center gap-2">
           <ThemeToggle />
         </div>
