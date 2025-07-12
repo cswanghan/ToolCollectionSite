@@ -22,7 +22,8 @@ export function AutoAds() {
     // 启用自动广告
     try {
       if (typeof window !== 'undefined') {
-        (window.adsbygoogle = window.adsbygoogle || []).push({
+        (window as any).adsbygoogle = (window as any).adsbygoogle || [];
+        (window as any).adsbygoogle.push({
           google_ad_client: "ca-pub-4876317440241925",
           enable_page_level_ads: true
         });
