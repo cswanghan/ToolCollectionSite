@@ -43,7 +43,7 @@ export default async function HomePage() {
               <h3 className="font-semibold mb-2">{tool.name}</h3>
               <p className="text-sm text-slate-600 dark:text-slate-400 mb-3">{tool.description}</p>
               <div className="flex justify-between items-center">
-                <span className="text-xs text-slate-500">👁 {tool.clicks.toLocaleString()} 次使用</span>
+                <span className="text-xs text-slate-500">👁 {tool.click_count.toLocaleString()} 次使用</span>
                 <a href={`/t/${tool.id}`} className="text-blue-600 hover:text-blue-700 text-sm font-medium">
                   查看详情 →
                 </a>
@@ -119,7 +119,7 @@ export default async function HomePage() {
           </div>
           <div>
             <div className="text-3xl font-bold text-purple-600">
-              {tools.reduce((sum, tool) => sum + tool.clicks, 0).toLocaleString()}
+              {tools.reduce((sum, tool) => sum + tool.click_count, 0).toLocaleString()}
             </div>
             <div className="text-sm text-slate-600 dark:text-slate-400">总使用次数</div>
           </div>
